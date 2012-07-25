@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>GMail Login</title>
+</head>
+<body>
+<form id="fid" name="formLogin" action="inbox2.psp" method="post">
+<label for="username">User Name: </label>
+<input type="text" name="username"><br>
+<label for="password">Password: </label>
+<input type="password" name="passwd"><br>
+<input type="submit" value="Submit">
+</form>
+</body>
+</html>

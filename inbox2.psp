@@ -1,0 +1,57 @@
+<html>
+<%@ /usr/bin/env python %>
+<%
+import mechanize
+import re
+from BeautifulSoup import BeautifulSoup
+br = mechanize.Browser()
+response = br.open("http://www.gmail.com")
+loginForm = br.forms().next()
+loginForm["Email"] = form['username']
+loginForm["Passwd"] = form['passwd']
+response = br.open(loginForm.click())
+response2 = br.open("http://mail.google.com/mail/h/")
+result = response2.read()
+soup = BeautifulSoup(result)
+frms = soup.findAll('form')
+tempFrm = str(frms[1])
+tempFrm = re.sub(r"<form.*>", "", tempFrm)
+tempFrm = re.sub(r"<\/form>", "", tempFrm)
+(soup.findAll('form'))[1].replaceWith(tempFrm)
+
+soup2 = BeautifulSoup(str(soup))
+
+trs = soup2.findAll('tr', {'bgcolor':'#ffffff'})
+tempButtonLink = re.findall(r"\".*\"", str(soup2.base))
+tempButtonLink2 = re.sub(r"\"", '', tempButtonLink[0])
+buttonText = '''<form name="mailRead" value="form" action="getmail.psp" method="post"> <input type="hidden" name="username" value="''' + form['username'] + '''"> <input type="hidden" name="passwd" value="''' + form['passwd'] + '''"> <input type="hidden" name="url" value="'''
+for tr in trs:
+	oldHtml = tr.contents[5]
+	href = re.findall(r"\"\?v=.*\"", str(oldHtml))
+	hrefLink = re.sub(r"\"", '', href[0])
+	buttonLink = tempButtonLink2+hrefLink
+	buttonUrl = buttonText+buttonLink
+	buttonUrl = buttonUrl + '''"> <input type="submit" value="Read Mail"> </form>'''
+	newHtml = re.sub(r"<a href.*>", buttonUrl, str(oldHtml))
+	tr.contents[5].replaceWith(newHtml)
+
+
+trs2 = soup2.findAll('tr', {'bgcolor':'#E8EEF7'})
+for tr in trs2:
+	oldHtml = tr.contents[5]
+	href = re.findall(r"\"\?v=.*\"", str(oldHtml))
+	hrefLink = re.sub(r"\"", '', href[0])
+	buttonLink = tempButtonLink2+hrefLink
+	buttonUrl = buttonText+buttonLink
+	buttonUrl = buttonUrl + '''"> <input type="submit" value="Read Mail"> </form>'''
+	newHtml = re.sub(r"<a href.*>", buttonUrl, str(oldHtml))
+	tr.contents[5].replaceWith(newHtml)
+
+
+soup2.base.replaceWith(".")
+result2 = soup2.prettify()
+%>
+<h1>Your GMail Inbox:</h1>
+<%=result2%>
+</html>
+
