@@ -1,0 +1,22 @@
+<html>
+<%@ /usr/bin/env python %>
+<%
+import mechanize
+import re
+from BeautifulSoup import BeautifulSoup
+br = mechanize.Browser()
+response = br.open("http://www.gmail.com")
+loginForm = br.forms().next()
+loginForm["Email"] = form['username']
+loginForm["Passwd"] = form['passwd']
+response = br.open(loginForm.click())
+response2 = br.open(form['url'])
+result = response2.read()
+
+#response = br.open(form['url'])
+#result = response.read()
+%>
+<h1>Your Mail:</h1>
+<%=result%>
+</html>
+
